@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.apiRouter = void 0;
+const express_1 = require("express");
+const transactions_1 = require("./routes/transactions");
+const categories_1 = require("./routes/categories");
+const stats_1 = require("./routes/stats");
+exports.apiRouter = (0, express_1.Router)();
+exports.apiRouter.use("/transactions", transactions_1.transactionsRouter);
+exports.apiRouter.use("/categories", categories_1.categoriesRouter);
+exports.apiRouter.use("/stats", stats_1.statsRouter);

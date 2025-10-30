@@ -1,0 +1,80 @@
+## Project Purpose
+- Expense Tracker Dashboard built with Vite + React + TypeScript.
+- Fully client-side: transactions persist in localStorage via a custom `useTransactions` hook.
+- UI: Tailwind CSS + shadcn/ui + Radix primitives; charts via Recharts.
+
+## How to Run
+- Install: `npm install`
+- Dev server: `npm run dev` (Vite, typically http://localhost:5173)
+- Build: `npm run build`
+- Preview: `npm run preview`
+- Lint: `npm run lint`
+
+## Repo Structure (high level)
+- `src/pages`: routes (`Index.tsx`, `NotFound.tsx`)
+- `src/components`: feature UI (e.g., `TransactionList`, `TransactionDialog`, `MonthlyChart`, `FilterControls`, `ExportButton`, `BalanceCards`)
+- `src/components/ui`: shadcn/ui primitives
+- `src/hooks`: custom hooks (notably `useTransactions` and `use-toast`)
+- `src/types`: shared types (`transaction.ts`)
+- `src/lib`: small utilities (`utils.ts`)
+
+## Data Model
+- `Transaction` type in `src/types/transaction.ts` drives all domain data.
+- Source of truth is `useTransactions` (local state + localStorage persistence).
+- No backend calls or external API dependencies.
+
+## Conventions
+- TypeScript strictness: prefer explicit types on public APIs and complex values; avoid `any`.
+- React: functional components with hooks; keep components pure; lift state thoughtfully.
+- Styling: Tailwind for layout/spacing; reuse shadcn/ui components; keep class names readable.
+- Accessibility: preserve Radix/shadcn semantics; ensure labels/aria where appropriate.
+- File naming: PascalCase for components, camelCase for helpers/hooks; one component per file when practical.
+- Avoid deep prop drilling; compose via props and small components. Introduce context only if clearly needed.
+
+## UI Patterns
+- Prefer shadcn/ui components from `src/components/ui` where available.
+- Use `cn`/utility helpers from `src/lib/utils.ts` for class merging.
+- Keep variants in components small and focused; avoid over-generalization.
+
+## State and Side Effects
+- Prefer local component state and custom hooks. If cross-cutting state emerges, consider a minimal context provider over adding heavy libraries.
+- Local persistence only: write through `useTransactions` to sync with localStorage.
+
+## Charts
+- Use Recharts (already installed). Keep datasets small and formatting fast; avoid unnecessary re-renders by memoizing computed data.
+
+## Routing
+- React Router v6 in use; keep pages in `src/pages` and minimal route logic in `src/main.tsx`/`src/pages`.
+
+## Linting & Formatting
+- Run `npm run lint` before committing significant changes.
+- Follow existing formatting; do not reformat unrelated code.
+
+## Testing & Validation (lightweight guidance)
+- When adding inputs/forms, use `react-hook-form` + `zod` for schema validation to match existing stack.
+- Add minimal unit logic in hooks/utilities where easy; otherwise prefer manual test via dev server.
+
+## Performance
+- Memoize expensive derived values (`useMemo`) and callbacks (`useCallback`) where it prevents list re-renders.
+- Virtualization is not necessary unless lists grow; keep it simple.
+
+## Do / Don’t
+- Do: keep changes incremental and readable; add types; reuse existing UI primitives; add small, focused components.
+- Don’t: introduce new state libraries, date libs, or UI kits; change code style; use `any`; add backend dependencies.
+
+## AI Change Guidelines (Cursor)
+- Keep edits scoped: modify only relevant files; avoid large refactors unless requested.
+- Before adding a new component, check for an existing equivalent in `src/components` or `src/components/ui`.
+- If adding a feature touching transactions: update types in `src/types/transaction.ts` and persistence logic in `src/hooks/useTransactions.ts` consistently.
+- Prefer composing existing `FilterControls`, `TransactionDialog`, and `ExportButton` instead of duplicating functionality.
+- Update UI with accessibility and responsiveness in mind (Tailwind + shadcn patterns).
+- Document non-obvious decisions with concise code comments; avoid noisy comments.
+
+## Commit Style
+- Use clear, imperative messages: "Add X", "Fix Y", "Refactor Z".
+- Group related changes; avoid mixed concerns in one commit.
+
+## Safe Defaults
+- No network calls; keep everything client-side.
+- Maintain TypeScript safety and avoid suppressions.
+- Maintain current indentation and formatting style.

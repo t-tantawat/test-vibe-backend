@@ -11,7 +11,7 @@ import { format } from "date-fns";
 interface TransactionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (transaction: Omit<Transaction, "id" | "createdAt">) => void;
+  onSubmit: (transaction: Omit<Transaction, "id" | "createdAt">) => Promise<void>;
   editTransaction?: Transaction | null;
 }
 
@@ -21,6 +21,7 @@ export function TransactionDialog({ open, onOpenChange, onSubmit, editTransactio
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd"));
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (editTransaction) {
@@ -38,22 +39,37 @@ export function TransactionDialog({ open, onOpenChange, onSubmit, editTransactio
     }
   }, [editTransaction, open]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!amount || !category) return;
 
-    onSubmit({
-      type,
-      amount: parseFloat(amount),
-      category: category as any,
-      description,
-      date,
-    });
-
-    onOpenChange(false);
+    setSubmitting(true);
+    try {
+      await onSubmit({
+        type,
+        amount: parseFloat(amount),
+        category: category as any,
+        description,
+        date,
+      });
+      onOpenChange(false);
+    } catch (err) {
+      console.error("Failed to submit transaction", err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const categories = type === "expense" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+
+  const handleTypeChange = (value: string) => {
+    const nextType = value as TransactionType;
+    setType(nextType);
+    const nextCategories = nextType === "expense" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+    if (!nextCategories.includes(category as any)) {
+      setCategory("");
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -63,14 +79,12 @@ export function TransactionDialog({ open, onOpenChange, onSubmit, editTransactio
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4 py-4">
-            {!editTransaction && (
-              <Tabs value={type} onValueChange={(v) => setType(v as TransactionType)}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="expense">Expense</TabsTrigger>
-                  <TabsTrigger value="income">Income</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            )}
+            <Tabs value={type} onValueChange={handleTypeChange}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="expense">Expense</TabsTrigger>
+                <TabsTrigger value="income">Income</TabsTrigger>
+              </TabsList>
+            </Tabs>
 
             <div className="space-y-2">
               <Label htmlFor="amount">Amount</Label>
@@ -124,11 +138,11 @@ export function TransactionDialog({ open, onOpenChange, onSubmit, editTransactio
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={submitting}>
               Cancel
             </Button>
-            <Button type="submit">
-              {editTransaction ? "Update" : "Add"}
+            <Button type="submit" disabled={submitting}>
+              {submitting ? "Saving..." : editTransaction ? "Update" : "Add"}
             </Button>
           </DialogFooter>
         </form>

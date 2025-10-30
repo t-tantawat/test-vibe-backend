@@ -1,8 +1,39 @@
-# Welcome to your Lovable project
+# Expense Tracker Dashboard
+
+## Overview
+
+This repository contains a Vite + React + TypeScript single-page application for tracking personal income and expenses. The default route renders a dashboard that surfaces current balance, income, and expense totals, along with filtering tools, CSV export, and a Recharts-powered monthly overview. All transaction data persists locally in the browser via `localStorage`, making the app fully client-side with no backend dependencies.
+
+## Key Features
+
+- **Dashboard summary** displaying total balance, income, and expenses at a glance.
+- **Transaction management** with shadcn dialog for adding and editing entries, plus inline delete actions.
+- **Filtering and export** tools covering category/date filters and CSV export with toast feedback.
+- **Monthly visualization** using Recharts to plot income vs. expenses for the current month.
+- **Local persistence** handled by a custom `useTransactions` hook that syncs transactions to `localStorage`.
+
+## Run Locally
+
+Ensure you have Node.js and npm installed (the project uses npm scripts by default).
+
+```sh
+npm install
+npm run dev
+```
+
+Open the URL printed by Vite (typically http://localhost:5173) to view the app. While the dev server is running, edits to the `src` directory hot-reload in the browser.
+
+## GitHub Copilot Guidelines
+
+- Treat Copilot suggestions as drafts—review for correctness, security, and design consistency before accepting.
+- Prefer prompting Copilot with clear function and test intentions so generated code includes validation paths.
+- Keep domain logic transparent; avoid accepting opaque code blocks that you cannot explain to reviewers.
+- Run relevant tests or manual checks after inserting Copilot code to confirm behavior matches project expectations.
+- Remove unused imports, variables, or placeholder code that Copilot may include to keep the codebase tidy.
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/1da6e1a7-fe0f-470a-af54-367320e74b6a
+**Lovable URL**: https://lovable.dev/projects/1da6e1a7-fe0f-470a-af54-367320e74b6a
 
 ## How can I edit this code?
 
@@ -19,22 +50,6 @@ Changes made via Lovable will be committed automatically to this repo.
 If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
 
 **Edit a file directly in GitHub**
 

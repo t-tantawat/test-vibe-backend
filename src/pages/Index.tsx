@@ -13,7 +13,7 @@ import { isAfter, isBefore, startOfDay } from "date-fns";
 import { toast } from "sonner";
 
 const Index = () => {
-  const { transactions, addTransaction, updateTransaction, deleteTransaction } = useTransactions();
+  const { transactions, addTransaction, updateTransaction, deleteTransaction, loading, error } = useTransactions();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -56,15 +56,21 @@ const Index = () => {
     };
   }, [transactions]);
 
-  const handleAddTransaction = (transaction: Omit<Transaction, "id" | "createdAt">) => {
-    if (editingTransaction) {
-      updateTransaction(editingTransaction.id, transaction);
-      toast.success("Transaction updated successfully");
-    } else {
-      addTransaction(transaction);
-      toast.success("Transaction added successfully");
+  const handleAddTransaction = async (transaction: Omit<Transaction, "id" | "createdAt">) => {
+    try {
+      if (editingTransaction) {
+        await updateTransaction(editingTransaction.id, transaction);
+        toast.success("Transaction updated successfully");
+      } else {
+        await addTransaction(transaction);
+        toast.success("Transaction added successfully");
+      }
+      setEditingTransaction(null);
+    } catch (err: any) {
+      const message = err?.message || "Failed to save transaction";
+      toast.error(message);
+      throw err;
     }
-    setEditingTransaction(null);
   };
 
   const handleEdit = (transaction: Transaction) => {
@@ -72,9 +78,14 @@ const Index = () => {
     setDialogOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    deleteTransaction(id);
-    toast.success("Transaction deleted");
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteTransaction(id);
+      toast.success("Transaction deleted");
+    } catch (err: any) {
+      const message = err?.message || "Failed to delete transaction";
+      toast.error(message);
+    }
   };
 
   const handleDialogClose = (open: boolean) => {
@@ -131,11 +142,18 @@ const Index = () => {
               <h2 className="text-xl font-semibold mb-4">
                 Transactions ({filteredTransactions.length})
               </h2>
-              <TransactionList
-                transactions={filteredTransactions}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
+              {error && (
+                <p className="text-destructive text-sm mb-2">{error}</p>
+              )}
+              {loading ? (
+                <p className="text-sm text-muted-foreground">Loading transactions...</p>
+              ) : (
+                <TransactionList
+                  transactions={filteredTransactions}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              )}
             </div>
           </div>
         </div>
