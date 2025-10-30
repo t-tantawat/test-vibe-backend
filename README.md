@@ -114,6 +114,26 @@ This project is built with:
    - ดู log: `heroku logs --tail --app <app-name>`  
    - ทดสอบ API: `curl https://<app-name>.herokuapp.com/health`
 
+## Deploying the Frontend to Vercel
+
+1. **เตรียมค่า API**  
+   - คัดลอกไฟล์ตัวอย่าง `.env.production.example` ไปเป็น `.env.production` และตั้ง `VITE_API_URL` ให้ชี้ไปยัง backend (เช่น `https://lit-brook-96909-82a50b5b1f3b.herokuapp.com`)
+   - สำหรับ production จริง แนะนำตั้งค่า `VITE_API_URL` ผ่าน Environment Variables บนแดชบอร์ด Vercel แทนการ commit ไฟล์
+2. **เชื่อมต่อ repository กับ Vercel**  
+   - กด “Import Project” ใน Vercel แล้วเลือก repo นี้
+   - Framework: Vite (Vercel จะ detect อัตโนมัติ)  
+   - Build command: `npm run build`  
+   - Output directory: `dist`
+3. **เพิ่ม Environment Variables บน Vercel**  
+   - ตั้ง `VITE_API_URL` = URL ของ backend  
+   - หากมีค่าอื่นเพิ่มภายหลัง ให้ตั้งในหน้าเดียวกัน
+4. **Deploy**  
+   - หลังตั้งค่าครบ กด Deploy ครั้งแรก
+   - เมื่อ push โค้ดใหม่เข้า branch เดียวกัน Vercel จะ redeploy อัตโนมัติ
+5. **ทดสอบ**  
+   - เปิด URL ที่ Vercel ให้มา ตรวจว่าหน้าตาและการเรียก API ทำงานถูกต้อง  
+   - หาก backend จำกัด CORS ให้เพิ่มโดเมนของ Vercel ในตัวแปร `CORS_ORIGIN` บน Heroku
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/1da6e1a7-fe0f-470a-af54-367320e74b6a) and click on Share -> Publish.
