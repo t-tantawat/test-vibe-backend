@@ -75,6 +75,45 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Deploying the Backend to Heroku
+
+1. **เตรียมโปรเจกต์**  
+   - ตรวจว่ามี Node.js (เวอร์ชัน 18+) และ Heroku CLI (`heroku login`).  
+   - สร้างไฟล์ `backend/.env` จาก `backend/.env.example` แล้วใส่ค่าจาก Supabase (อย่านำขึ้น git)
+2. **สร้าง Heroku app**  
+   ```bash
+   heroku create <app-name>
+   ```
+3. **ตั้งค่า environment variables**  
+   ```bash
+   heroku config:set \
+     DATABASE_URL="..." \
+     DIRECT_URL="..." \
+     SUPABASE_SERVICE_ROLE_KEY="..." \
+     SUPABASE_URL="..." \
+     CORS_ORIGIN="https://โดเมน-frontendของคุณ" \
+     --app <app-name>
+   ```
+4. **เตรียม Procfile ตาม repo**  
+   - โปรเจกต์นี้มี `Procfile` (`web: npm --prefix backend run start`) แล้ว ไม่ต้องแก้เพิ่ม
+5. **ติดตั้ง dependency แล้ว build**  
+   ```bash
+   npm install
+   npm run heroku-postbuild   # ติดตั้ง + build backend เหมือนที่ Heroku จะทำ
+   ```
+6. **Deploy**  
+   ```bash
+   git push heroku main
+   ```
+7. **รัน migration / seed บน Heroku**  
+   ```bash
+   heroku run npm --prefix backend run prisma:migrate -- --name init --app <app-name>
+   heroku run npm --prefix backend run prisma:seed --app <app-name>  # ถ้าต้องการ seed
+   ```
+8. **ตรวจสอบ**  
+   - ดู log: `heroku logs --tail --app <app-name>`  
+   - ทดสอบ API: `curl https://<app-name>.herokuapp.com/health`
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/1da6e1a7-fe0f-470a-af54-367320e74b6a) and click on Share -> Publish.
