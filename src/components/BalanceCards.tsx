@@ -1,13 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BalanceCardsProps {
   totalBalance: number;
   totalIncome: number;
   totalExpenses: number;
+  loading?: boolean;
 }
 
-export function BalanceCards({ totalBalance, totalIncome, totalExpenses }: BalanceCardsProps) {
+export function BalanceCards({ totalBalance, totalIncome, totalExpenses, loading = false }: BalanceCardsProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -23,7 +25,11 @@ export function BalanceCards({ totalBalance, totalIncome, totalExpenses }: Balan
           <Wallet className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(totalBalance)}</div>
+          {loading ? (
+            <Skeleton className="h-8 w-32" />
+          ) : (
+            <div className="text-2xl font-bold">{formatCurrency(totalBalance)}</div>
+          )}
           <p className="text-xs text-muted-foreground mt-1">Current balance</p>
         </CardContent>
       </Card>
@@ -34,7 +40,11 @@ export function BalanceCards({ totalBalance, totalIncome, totalExpenses }: Balan
           <TrendingUp className="h-4 w-4 text-success" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-success">{formatCurrency(totalIncome)}</div>
+          {loading ? (
+            <Skeleton className="h-8 w-28" />
+          ) : (
+            <div className="text-2xl font-bold text-success">{formatCurrency(totalIncome)}</div>
+          )}
           <p className="text-xs text-muted-foreground mt-1">All time income</p>
         </CardContent>
       </Card>
@@ -45,7 +55,11 @@ export function BalanceCards({ totalBalance, totalIncome, totalExpenses }: Balan
           <TrendingDown className="h-4 w-4 text-destructive" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-destructive">{formatCurrency(totalExpenses)}</div>
+          {loading ? (
+            <Skeleton className="h-8 w-28" />
+          ) : (
+            <div className="text-2xl font-bold text-destructive">{formatCurrency(totalExpenses)}</div>
+          )}
           <p className="text-xs text-muted-foreground mt-1">All time expenses</p>
         </CardContent>
       </Card>

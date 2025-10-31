@@ -11,6 +11,8 @@ import { useTransactions } from "@/hooks/useTransactions";
 import { Transaction } from "@/types/transaction";
 import { isAfter, isBefore, startOfDay } from "date-fns";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 
 const Index = () => {
   const { transactions, addTransaction, updateTransaction, deleteTransaction, loading, error } = useTransactions();
@@ -123,9 +125,10 @@ const Index = () => {
             totalBalance={totalBalance}
             totalIncome={totalIncome}
             totalExpenses={totalExpenses}
+            loading={loading}
           />
 
-          <MonthlyChart transactions={transactions} />
+          <MonthlyChart transactions={transactions} loading={loading} />
 
           <div className="space-y-4">
             <FilterControls
@@ -139,14 +142,42 @@ const Index = () => {
             />
 
             <div>
-              <h2 className="text-xl font-semibold mb-4">
-                Transactions ({filteredTransactions.length})
-              </h2>
+              <div className="flex items-center gap-3 mb-4">
+                <h2 className="text-xl font-semibold">Transactions</h2>
+                {loading ? (
+                  <Skeleton className="h-5 w-16" />
+                ) : (
+                  <span className="text-sm text-muted-foreground">
+                    ({filteredTransactions.length})
+                  </span>
+                )}
+              </div>
               {error && (
                 <p className="text-destructive text-sm mb-2">{error}</p>
               )}
               {loading ? (
-                <p className="text-sm text-muted-foreground">Loading transactions...</p>
+                <div className="space-y-2">
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <Card key={idx} className="p-4">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          <Skeleton className="h-10 w-10 rounded-lg" />
+                          <div className="flex-1 space-y-2">
+                            <Skeleton className="h-4 w-32" />
+                            <Skeleton className="h-3 w-48" />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="h-5 w-16" />
+                          <div className="flex gap-1">
+                            <Skeleton className="h-8 w-8 rounded-md" />
+                            <Skeleton className="h-8 w-8 rounded-md" />
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
               ) : (
                 <TransactionList
                   transactions={filteredTransactions}
