@@ -25,6 +25,7 @@ export function FilterControls({
   onClearFilters,
 }: FilterControlsProps) {
   const allCategories = [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
+  const uniqueCategories = Array.from(new Set(allCategories));
   const hasActiveFilters = categoryFilter || startDate || endDate;
 
   return (
@@ -53,7 +54,7 @@ export function FilterControls({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All categories</SelectItem>
-              {allCategories.map((cat) => (
+              {uniqueCategories.map((cat) => (
                 <SelectItem key={cat} value={cat}>
                   {cat}
                 </SelectItem>
